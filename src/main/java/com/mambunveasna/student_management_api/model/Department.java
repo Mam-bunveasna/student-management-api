@@ -1,14 +1,18 @@
 package com.mambunveasna.student_management_api.model;
 import java.util.List;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
-
+    @NotBlank
     private String name;
 
 
@@ -33,7 +37,9 @@ public class Department {
         this.name = name;
 
     }
+
     @OneToMany(mappedBy = "department")
+    @JsonIgnore
     private List<Student> students;
 
     public List<Student> getStudents() {

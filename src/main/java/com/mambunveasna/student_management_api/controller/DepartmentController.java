@@ -5,6 +5,7 @@ import com.mambunveasna.student_management_api.model.Student;
 import com.mambunveasna.student_management_api.repository.DepartmentRepository;
 import com.mambunveasna.student_management_api.service.DepartmentService;
 import com.mambunveasna.student_management_api.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,21 +20,21 @@ public class DepartmentController {
         this.departmentService = departmentService;
         this.departmentRepository = departmentRepository;
     }
-    @GetMapping("/departments")
+    @GetMapping("/department")
     public List<Department> getAllDepartments(){
         return departmentService.getAllDepartments();
     }
-    @GetMapping("/departments/{id}")
+    @GetMapping("/department/{id}")
     public Department getById(@PathVariable Long id){
 
         return departmentService.getById(id);
     }
-    @PostMapping("/departments")
-    public Department addDepartment(@RequestBody Department department){
+    @PostMapping("/department")
+    public Department addDepartment(@Valid @RequestBody Department department){
         return departmentService.addDepartment(department);
     }
-    @PutMapping("/departments/{id}")
-    public Department updateDepartment(@PathVariable Long id, @RequestBody Department department ){
+    @PutMapping("/department/{id}")
+    public Department updateDepartment(@PathVariable Long id,@Valid @RequestBody Department department ){
         return departmentService.updateDepartment(id,department);
     }
     @DeleteMapping("/department/{id}")

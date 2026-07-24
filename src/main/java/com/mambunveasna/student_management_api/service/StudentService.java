@@ -1,5 +1,7 @@
 package com.mambunveasna.student_management_api.service;
 import com.mambunveasna.student_management_api.dto.StudentRequestDTO;
+import com.mambunveasna.student_management_api.exception.DepartmentNotFoundException;
+import com.mambunveasna.student_management_api.exception.StudentNotFoundException;
 import com.mambunveasna.student_management_api.repository.DepartmentRepository;
 import com.mambunveasna.student_management_api.dto.StudentResponseDTO;
 import com.mambunveasna.student_management_api.repository.StudentRepository;
@@ -73,33 +75,42 @@ public class StudentService {
         return convertToDTO(student);
     }
     public StudentResponseDTO getById(Long id){
-        Student student = studentRepository.findById(id).orElse(null);
-
-        if(student != null){
-            StudentResponseDTO dto = convertToDTO(student);
-            return dto;
-        }
-        return null;
+        Student student = studentRepository.findById(id).orElseThrow(() ->
+                new DepartmentNotFoundException(
+                        "Student with id " + id + " not found"
+                ));
+        return convertToDTO(student);
     }
-    public StudentResponseDTO updateStudent(Long id , StudentRequestDTO studentRequestDTO){
-         Student student = studentRepository.findById(id).orElse(null);
-        if(student!=null){
-            student.setEmail(studentRequestDTO.getEmail());
-            student.setName(studentRequestDTO.getName());
-            Department department = departmentRepository.findById(studentRequestDTO.getDepartmentId()).orElse(null);
-            student.setDepartment(department);
-            studentRepository.save(student);
-            return convertToDTO(student);
-        }
-        return null;
-    }
-    public String deleteStudent(Long id){
-        Student s = studentRepository.findById(id).orElse(null);
-        if(s!=null){
-            studentRepository.deleteById(id);
+    public StudentResponseDTO updateStudent(Long id, StudentRequestDTO studentRequestDTO){
 
-            return "Delete";
-        }
-        return "Student not found";
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException(
+                                "Student with id " + id + " not found"
+                        )
+                );
+
+        student.setName(studentRequestDTO.getName());
+        student.setEmail(studentRequestDTO.getEmail());
+
+        Department department = departmentRepository.findById(studentRequestDTO.getDepartmentId())
+                .orElseThrow(() ->
+                        new StudentNotFoundException(
+                                "Department not found"
+                        )
+                );
+
+        student.setDepartment(department);
+
+        studentRepository.save(student);
+
+        return convertToDTO(student);
+    }
+    public Student deleteStudent(Long id){
+        Student student = studentRepository.findById(id).orElseThrow(
+                ()->new StudentNotFoundException("Student"+" "+id+" "+"not found!")
+        );
+        studentRepository.delete(student);
+        return student;
     }
 }
