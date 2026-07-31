@@ -1,10 +1,31 @@
 package com.mambunveasna.student_management_api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class StudentResponseDTO {
 
+    @Schema(
+            description = "Unique ID of the student",
+            example = "1"
+    )
     private Long id;
+
+    @Schema(
+            description = "Student's email address",
+            example = "john.doe@example.com"
+    )
     private String email;
+
+    @Schema(
+            description = "Student's full name",
+            example = "John Doe"
+    )
     private String name;
+
+    @Schema(
+            description = "Name of the department the student belongs to",
+            example = "Computer Science"
+    )
     private String departmentName;
 
     public StudentResponseDTO() {
@@ -16,8 +37,6 @@ public class StudentResponseDTO {
         this.name = name;
         this.departmentName = departmentName;
     }
-
-    // Generate getters and setters
 
     public Long getId() {
         return id;
