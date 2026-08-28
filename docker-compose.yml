@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_ROOT_PASSWORD: 4102008
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: studentdb
 
     ports:
@@ -16,14 +16,13 @@ services:
       - mysql_data:/var/lib/mysql
 
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p4102008"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$${DB_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
     networks:
       - student-network
-
 
   app:
     build:
@@ -39,7 +38,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studentdb
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 4102008
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
 
     depends_on:
       mysql:
@@ -48,10 +47,8 @@ services:
     networks:
       - student-network
 
-
 volumes:
   mysql_data:
-
 
 networks:
   student-network:
