@@ -1,0 +1,58 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: student-management-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 4102008
+      MYSQL_DATABASE: studentdb
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p4102008"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - student-network
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: student-management-api-container
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studentdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 4102008
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - student-network
+
+
+volumes:
+  mysql_data:
+
+
+networks:
+  student-network:
+    driver: bridge

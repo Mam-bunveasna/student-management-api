@@ -10,6 +10,9 @@ import java.util.List;
 import com.mambunveasna.student_management_api.model.Student;
 import java.util.ArrayList;
 import com.mambunveasna.student_management_api.model.Department;
+import com.mambunveasna.student_management_api.dto.StudentRequestDTO;
+import com.mambunveasna.student_management_api.model.Department;
+
 
 @Service
 public class StudentService {
@@ -74,11 +77,15 @@ public class StudentService {
 
         return convertToDTO(student);
     }
-    public StudentResponseDTO getById(Long id){
-        Student student = studentRepository.findById(id).orElseThrow(() ->
-                new DepartmentNotFoundException(
-                        "Student with id " + id + " not found"
-                ));
+    public StudentResponseDTO getById(Long id) {
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException(
+                                "Student with id " + id + " not found"
+                        )
+                );
+
         return convertToDTO(student);
     }
     public StudentResponseDTO updateStudent(Long id, StudentRequestDTO studentRequestDTO){
@@ -95,11 +102,10 @@ public class StudentService {
 
         Department department = departmentRepository.findById(studentRequestDTO.getDepartmentId())
                 .orElseThrow(() ->
-                        new StudentNotFoundException(
+                        new DepartmentNotFoundException(
                                 "Department not found"
                         )
                 );
-
         student.setDepartment(department);
 
         studentRepository.save(student);
@@ -113,4 +119,5 @@ public class StudentService {
         studentRepository.delete(student);
         return student;
     }
+
 }

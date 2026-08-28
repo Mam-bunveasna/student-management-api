@@ -1,5 +1,4 @@
 package com.mambunveasna.student_management_api.model;
-
 import jakarta.persistence.*;
 
 @Entity

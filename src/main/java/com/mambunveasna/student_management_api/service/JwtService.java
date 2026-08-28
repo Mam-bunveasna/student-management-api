@@ -13,10 +13,17 @@ import java.util.Date;
 @Service
 public class JwtService {
 
+    public Date extractExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
+    }
     private static final String SECRET_KEY =
             "bXlfc3VwZXJfc2VjcmV0X2tleV9mb3JfanR3X2F1dGhfbGVhcm5pbmc=";
 
+    private static final long ACCESS_TOKEN_EXPIRATION =
+            1000L * 60 * 15; // 15 minutes
 
+    private static final long REFRESH_TOKEN_EXPIRATION =
+            1000L * 60 * 60 * 24 * 7; // 7 days
     private SecretKey getSigningKey() {
 
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -25,16 +32,22 @@ public class JwtService {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, long expiretion) {
 
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)
+                        new Date(System.currentTimeMillis() + expiretion)
                 )
                 .signWith(getSigningKey())
                 .compact();
+    }
+    public String generateAccessToken(UserDetails userDetails) {
+        return generateToken(userDetails, ACCESS_TOKEN_EXPIRATION);
+    }
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateToken(userDetails, REFRESH_TOKEN_EXPIRATION);
     }
 
 
